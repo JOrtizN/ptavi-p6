@@ -30,7 +30,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as my_socket:
     #print(Number_data[1], Number_data[4], Number_data[7])
 
     if Number_data[1] == "100" and Number_data[4] == "180" and Number_data[7] == "200":
-        #print("ENTRO")
+        print("Send ACK")
         my_socket.send(bytes("ACK" + " sip:" + USER + "@" + IP +
                         " SIP/2.0", 'utf-8') + b'\r\n\r\n')
     else:

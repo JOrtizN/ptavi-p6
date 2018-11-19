@@ -18,17 +18,17 @@ with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as my_socket:
 
         my_socket.connect((IP, PORT))
         my_socket.send(bytes(METHOD + " sip:" + USER + "@" + IP +
-                        " SIP/2.0", 'utf-8') + b'\r\n\r\n')
+                       " SIP/2.0", 'utf-8') + b'\r\n\r\n')
     else:
         print("Usage: python3 client.py method receiver@IP:SIPport")
 
     data = my_socket.recv(1024)
-    Number_data = data.decode('utf-8').split(" ")
+    n_data = data.decode('utf-8').split()
 
-    if Number_data[1] == "100" and Number_data[4] == "180" and Number_data[7] == "200":
+    if n_data[1] == "100" and n_data[4] == "180" and n_data[7] == "200":
         print("Send ACK")
         my_socket.send(bytes("ACK" + " sip:" + USER + "@" + IP +
-                        " SIP/2.0", 'utf-8') + b'\r\n\r\n')
+                       " SIP/2.0", 'utf-8') + b'\r\n\r\n')
     else:
         print('Recibido -- ', data.decode('utf-8'))
     print("Terminando socket...")

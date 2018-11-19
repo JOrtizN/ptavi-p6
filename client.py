@@ -19,7 +19,6 @@ with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as my_socket:
         PORT = int(sys.argv[2].split("@")[1].split(":")[1])
 
         my_socket.connect((IP, PORT))
-        #my_socket.connect(('localhost', 6001))
         my_socket.send(bytes(METHOD + " sip:" + USER + "@" + IP +
                         " SIP/2.0", 'utf-8') + b'\r\n\r\n')
     else:
@@ -27,10 +26,11 @@ with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as my_socket:
 
 
     data = my_socket.recv(1024)
-    Number_data = data.decode('utf-8').split(" ")[1]
-    #print(Number_data)
+    Number_data = data.decode('utf-8').split(" ")
+    #print(Number_data[1], Number_data[4], Number_data[7])
 
-    if Number_data == "100":
+    if Number_data[1] == "100" and Number_data[4] == "180" and Number_data[7] == "200":
+        #print("ENTRO")
         my_socket.send(bytes("ACK" + " sip:" + USER + "@" + IP +
                         " SIP/2.0", 'utf-8') + b'\r\n\r\n')
     else:

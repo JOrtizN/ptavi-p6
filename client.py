@@ -1,8 +1,6 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-"""
-Programa cliente que abre un socket a un servidor
-"""
+"""Programa cliente que abre un socket a un servidor."""
 
 import socket
 import sys
@@ -24,10 +22,8 @@ with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as my_socket:
     else:
         print("Usage: python3 client.py method receiver@IP:SIPport")
 
-
     data = my_socket.recv(1024)
     Number_data = data.decode('utf-8').split(" ")
-    #print(Number_data[1], Number_data[4], Number_data[7])
 
     if Number_data[1] == "100" and Number_data[4] == "180" and Number_data[7] == "200":
         print("Send ACK")

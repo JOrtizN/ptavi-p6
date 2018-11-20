@@ -10,10 +10,9 @@ if len(sys.argv) == 4:
     IP = sys.argv[1]
     PORT = int(sys.argv[2])
     fich_audio = sys.argv[3]
-elif len(sys.argv) != 4:
-    sys.exit("Usage: python3 server.py IP port audio_file")
+
 else:
-    self.wfile.write(b"SIP/2.0 400 Bad Request\r\n\r\n")
+    sys.exit("Usage: python3 server.py IP port audio_file")
 
 
 class EchoHandler(socketserver.DatagramRequestHandler):
@@ -22,13 +21,30 @@ class EchoHandler(socketserver.DatagramRequestHandler):
     def handle(self):
         """Filtrar por métodos."""
         for line in self.rfile:
-            method = line.decode('utf-8').split(" ")[0]
+            llega = line.decode('utf-8').split(" ")
+            method = llega[0]
+
             try:
+                arroba = llega[1].find("@") == -1
+                fsip = str(llega[1].split(":")[0]) != "sip"
+                lsip = str(llega[2]) != "SIP/2.0\r\n"
+                if (fsip or arroba or lsip):
+                    print("SIP/2.0 400 Bad Request\r\n\r\n")
+                    self.wfile.write(b"SIP/2.0 400 Bad Request\r\n\r\n")
+                    break
+            except IndexError:
+                pass
+
+            if len(llega) == 3:
+                if method not in ['INVITE', 'BYE', 'ACK']:
+                    self.wfile.write(b'SIP/2.0 405 Method Not Allowed\r\n')
+                    break
+
                 if method == "INVITE":
+                    print("El cliente nos manda " + line.decode('utf-8'))
                     self.wfile.write(b"SIP/2.0 100 Trying\r\n\r\n")
                     self.wfile.write(b"SIP/2.0 180 Ringing\r\n\r\n")
                     self.wfile.write(b"SIP/2.0 200 OK\r\n\r\n")
-                    print("El cliente nos manda " + line.decode('utf-8'))
 
                 elif method == "ACK":
                     print("El cliente nos manda " + line.decode('utf-8'))
@@ -41,8 +57,8 @@ class EchoHandler(socketserver.DatagramRequestHandler):
                     print("El cliente nos manda " + line.decode('utf-8'))
                     self.wfile.write(b"SIP/2.0 200 OK \r\n\r\n")
 
-            except method != ("INVITE" or "ACK" or "BYE"):
-                self.wfile.write(b"SIP/2.0 405 Method Not Allowed\r\n\r\n")
+            else:
+                break
 
 
 if __name__ == "__main__":
